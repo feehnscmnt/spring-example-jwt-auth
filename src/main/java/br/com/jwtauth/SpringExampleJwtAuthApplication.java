@@ -16,9 +16,14 @@ import java.io.Serializable;
 @ComponentScan(basePackages = { "br.com.jwtauth.controller", "br.com.jwtauth.security" })
 public class SpringExampleJwtAuthApplication implements Serializable {
 	private static final long serialVersionUID = -2754524501283439149L;
-
+	
+	/**
+	 * Método responsável pela inicialização da aplicação.
+	 */
 	public static void main(String[] args) {
+		
 		SpringApplication.run(SpringExampleJwtAuthApplication.class, args);
+		
 	}
 
 }

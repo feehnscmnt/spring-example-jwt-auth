@@ -3,16 +3,17 @@ package br.com.jwtauth.filter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
 import br.com.jwtauth.util.JwtUtils;
-import javax.servlet.FilterChain;
+import jakarta.servlet.FilterChain;
 import java.io.Serializable;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
- * Classe responsável pelo filtro de segurança da API.
+ * Classe responsável pelo filtro de segurança da aplicação.
  * 
  * @author Felipe Nascimento
  * 
@@ -20,25 +21,34 @@ import java.io.IOException;
 
 public class JwtTokenFilter extends OncePerRequestFilter implements Serializable {
 	private static final long serialVersionUID = 6127823280264977630L;
-
+	
+	/**
+	 * Método responsável pela interceptação das requisições para validação do token JWT e obtenção do usuário da API.
+	 */
 	@Override
-	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain filterChain) throws ServletException, IOException {
-		String header = req.getHeader("Authorization");
+	protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+		
+		var header = httpServletRequest.getHeader("Authorization");
 
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(req, resp);
+        if (Objects.isNull(header) || !header.startsWith("Bearer ")) {
+        	
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
             return;
+            
         }
 
-        String token = header.replace("Bearer ", "");
-        String username = JwtUtils.validateTokenAndGetUsername(token);
+        var token = header.replace("Bearer ", "");
+        var username = JwtUtils.validateTokenAndGetUsername(token);
 
-        if (username != null) {
+        if (Objects.nonNull(username)) {
+        	
             SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(username, null, null));
+            
         }
 
-        filterChain.doFilter(req, resp);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
+        
 	}
 	
 }

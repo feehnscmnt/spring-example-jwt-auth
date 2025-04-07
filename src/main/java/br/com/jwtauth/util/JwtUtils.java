@@ -22,33 +22,71 @@ public class JwtUtils implements Serializable {
 	private static final String KEY_SECRET = "example-jwt-auth-key-secret";
 	private static final long serialVersionUID = -531843526886721468L;
     private static final long EXPIRATION_TIME = 5 * 60 * 1000L;
-
+    
+    /**
+     * Método responsável pela geração do token JWT.
+     * 
+     * @param username - usuário da API
+     * 
+     * @return token JWT gerado
+     * 
+     */
     public static String generateToken(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS256, generateSecretKey())
-                .compact();
+    	
+        return Jwts
+        	.builder()
+            .setSubject(username)
+            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+            .signWith(SignatureAlgorithm.HS256, generateSecretKey())
+            .compact();
+        
     }
-
+    
+    /**
+     * Método responsável por validar o token JWT e obter o usuário da API.
+     * 
+     * @param token - token JWT
+     * 
+     * @return nome do usuário da API
+     * 
+     */
     public static String validateTokenAndGetUsername(String token) {
+    	
         try {
-        	return Jwts.parser()
+        	
+        	return Jwts
+        		.parser()
                 .setSigningKey(generateSecretKey())
                 .parseClaimsJws(token)
                 .getBody().getSubject();
-        } catch(JwtException | IllegalArgumentException e) {
+        	
+        } catch (JwtException | IllegalArgumentException e) {
+        	
             return null;
+            
         }
+        
     }
     
+    /**
+     * Método responsável por gerar a chave secreta responsável pela assinatura dos tokens.
+     *  
+     * @return chave secreta
+     * 
+     */
     private static String generateSecretKey() {
+    	
     	try {
+    		
     		byte[] key = MessageDigest.getInstance("SHA-256").digest(KEY_SECRET.getBytes(StandardCharsets.UTF_8));
         	return Base64.getEncoder().encodeToString(new SecretKeySpec(key, 0, key.length, "AES").getEncoded());
-    	} catch(NoSuchAlgorithmException e) {
+        	
+    	} catch (NoSuchAlgorithmException e) {
+    		
     		return null;
+    		
     	}
+    	
     }
     
 }

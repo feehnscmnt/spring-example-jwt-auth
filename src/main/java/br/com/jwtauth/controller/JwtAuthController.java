@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import br.com.jwtauth.message.ResponseMessages;
 import org.springframework.http.HttpStatus;
 import br.com.jwtauth.util.JwtUtils;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Classe controller responsável pela autenticação.
@@ -18,8 +20,9 @@ import br.com.jwtauth.util.JwtUtils;
 
 @RestController
 @RequestMapping("/v1")
-public class JwtAuthController {
-	
+public class JwtAuthController implements Serializable {
+	private static final long serialVersionUID = -2735566812964752958L;
+
 	/**
 	 * Método responsável pela autenticação.
 	 * 
@@ -30,17 +33,19 @@ public class JwtAuthController {
 	 */
 	@GetMapping("/auth")
 	public ResponseEntity<Object> auth(@RequestParam String usuario) {
-		if (usuario.equals("JWT-Auth")) {
+		
+		if (Objects.equals(usuario, "JWT-Auth")) {
 			
-			return ResponseEntity.status(HttpStatus.CREATED)
+			return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseMessages(JwtUtils.generateToken(usuario), HttpStatus.CREATED, HttpStatus.CREATED.value()));
 	        
 		} else {
 			
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+			return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseMessages("As credenciais de autenticação estão inválidas.", HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.value()));
 			
 		}
+		
 	}
 	
 	/**
@@ -51,8 +56,10 @@ public class JwtAuthController {
 	 */
 	@GetMapping("/test")
 	public ResponseEntity<Object> test() {
-		return ResponseEntity.status(HttpStatus.ACCEPTED)
+		
+		return ResponseEntity.status(HttpStatus.OK)
 			.body(new ResponseMessages("Você está autenticado.", HttpStatus.ACCEPTED, HttpStatus.ACCEPTED.value()));
+		
 	}
 	
 }

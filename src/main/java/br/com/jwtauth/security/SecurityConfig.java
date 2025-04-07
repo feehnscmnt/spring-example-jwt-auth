@@ -3,6 +3,7 @@ package br.com.jwtauth.security;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -28,28 +29,56 @@ public class SecurityConfig implements Serializable {
 	private String apiRole = new String(Base64.getDecoder().decode("VVNFUg=="));
 	private static final long serialVersionUID = 7108217250842338994L;
 	
+	/**
+	 * Método responsável por criar o filtro de segurança da aplicação.
+	 * 
+	 * @param httpSecurity
+	 * @return filtro de segurança criado
+	 * 
+	 * @throws Exception
+	 * 
+	 */
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtTokenFilter jwtTokenFilter) throws Exception {
+		
 		httpSecurity
-		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-		.authorizeHttpRequests(auth -> auth
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.authorizeHttpRequests(auth -> auth
 				
-			.antMatchers(HttpMethod.GET, "/v1/auth").permitAll()
+			.requestMatchers(HttpMethod.GET, "/v1/auth").permitAll()
 			
-			.anyRequest().authenticated().and()
+			.anyRequest().authenticated()).httpBasic(withDefaults()).csrf(csrf -> csrf.disable()
 			.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class));
 	
 	    return httpSecurity.build();
+	    
 	}
 	
+	/**
+	 * Método responsável pela configuração do usuário em memória.
+	 * 
+	 * @param authenticationManagerBuilder - gerenciador da configuração
+	 * 
+	 * @throws Exception
+	 * 
+	 */
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-		authenticationManagerBuilder.inMemoryAuthentication()
+		
+		authenticationManagerBuilder
+		    .inMemoryAuthentication()
 	        .withUser(apiUsername)
 	        .password(BCrypt.hashpw(apiPassword, BCrypt.gensalt()))
 	        .roles(apiRole);
+		
 	}
 	
+	/**
+	 * Método responsável por criar o bean JwtTokenFilter.
+	 * 
+	 * @return bean JwtTokenFilter criado
+	 * 
+	 */
 	@Bean
 	JwtTokenFilter jwtTokenFilter() {
 		return new JwtTokenFilter();
