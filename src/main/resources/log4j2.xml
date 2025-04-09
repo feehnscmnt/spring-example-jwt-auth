@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<configuration>
+	<properties>
+        <property name="folder">C:/Users/${sys:user.name}/Temp/SpringExampleJwtAuth</property>
+    </properties>
+    <appenders>
+    	<file name="fileAppender" fileName="${folder}/spring-example-jwt-auth.log" immediateFlush="true">
+            <patternLayout pattern="%d{dd/MM/yyyy HH:mm:ss} %-10p - %-20logger{1} - %msg%n"/>
+        </file>
+        <console name="console" target="SYSTEM_OUT">
+            <patternLayout pattern="%d{dd/MM/yyyy HH:mm:ss} %-10p - %-20logger{1} - %msg%n"/>
+        </console>
+    </appenders>
+    <loggers>
+        <root level="INFO">
+        	<appenderRef ref="fileAppender" level="info"/>
+            <appenderRef ref="console" level="debug"/>
+        </root>
+    </loggers>
+</configuration>

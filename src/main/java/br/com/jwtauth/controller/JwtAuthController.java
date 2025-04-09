@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.ResponseEntity;
 import br.com.jwtauth.message.ResponseMessages;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.http.HttpStatus;
+import org.apache.logging.log4j.Logger;
 import br.com.jwtauth.util.JwtUtils;
 import java.io.Serializable;
 import java.util.Objects;
@@ -21,6 +23,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/v1")
 public class JwtAuthController implements Serializable {
+	private static final Logger LOG = LogManager.getLogger(JwtAuthController.class.getName());
 	private static final long serialVersionUID = -2735566812964752958L;
 
 	/**
@@ -34,12 +37,18 @@ public class JwtAuthController implements Serializable {
 	@GetMapping("/auth")
 	public ResponseEntity<Object> auth(@RequestParam String usuario) {
 		
+		LOG.info("Autenticando o usuário {} para gerar o Token JWT...", usuario);
+		
 		if (Objects.equals(usuario, "JWT-Auth")) {
+			
+			LOG.info("Token JWT gerado com sucesso.");
 			
 			return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseMessages(JwtUtils.generateToken(usuario), HttpStatus.CREATED, HttpStatus.CREATED.value()));
 	        
 		} else {
+			
+			LOG.error("As credenciais de autenticação estão inválidas.");
 			
 			return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseMessages("As credenciais de autenticação estão inválidas.", HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.value()));
@@ -56,6 +65,8 @@ public class JwtAuthController implements Serializable {
 	 */
 	@GetMapping("/test")
 	public ResponseEntity<Object> test() {
+		
+		LOG.info("Você está autenticado.");
 		
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(new ResponseMessages("Você está autenticado.", HttpStatus.ACCEPTED, HttpStatus.ACCEPTED.value()));

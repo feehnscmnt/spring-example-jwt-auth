@@ -1,9 +1,11 @@
 package br.com.jwtauth.util;
 
 import java.security.NoSuchAlgorithmException;
+import org.apache.logging.log4j.LogManager;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.nio.charset.StandardCharsets;
 import javax.crypto.spec.SecretKeySpec;
+import org.apache.logging.log4j.Logger;
 import io.jsonwebtoken.JwtException;
 import java.security.MessageDigest;
 import io.jsonwebtoken.Jwts;
@@ -19,6 +21,7 @@ import java.util.Date;
  */
 
 public class JwtUtils implements Serializable {
+	private static final Logger LOG = LogManager.getLogger(JwtUtils.class.getName());
 	private static final String KEY_SECRET = "example-jwt-auth-key-secret";
 	private static final long serialVersionUID = -531843526886721468L;
     private static final long EXPIRATION_TIME = 5 * 60 * 1000L;
@@ -62,9 +65,11 @@ public class JwtUtils implements Serializable {
         	
         } catch (JwtException | IllegalArgumentException e) {
         	
-            return null;
+            LOG.error("Houve erro ao tentar validar e obter o usuário. Exception: {}", e.getMessage());
             
         }
+        
+        return null;
         
     }
     
@@ -83,9 +88,11 @@ public class JwtUtils implements Serializable {
         	
     	} catch (NoSuchAlgorithmException e) {
     		
-    		return null;
+    		LOG.error("Houve erro ao tentar gerar a chave secreta. Exception: {}", e.getMessage());
     		
     	}
+    	
+    	return null;
     	
     }
     
