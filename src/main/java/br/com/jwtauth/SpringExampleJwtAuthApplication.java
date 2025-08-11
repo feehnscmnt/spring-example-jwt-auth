@@ -1,7 +1,6 @@
 package br.com.jwtauth;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.boot.SpringApplication;
 import java.io.Serializable;
 
@@ -13,7 +12,6 @@ import java.io.Serializable;
  */
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "br.com.jwtauth.controller", "br.com.jwtauth.security" })
 public class SpringExampleJwtAuthApplication implements Serializable {
 	private static final long serialVersionUID = -2754524501283439149L;
 	

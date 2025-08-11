@@ -21,25 +21,29 @@ import java.util.Date;
  */
 
 public class JwtUtils implements Serializable {
+	private static final String KEY_SECRET = new String(Base64.getDecoder().decode("ZXhhbXBsZS1qd3QtYXV0aC1rZXktc2VjcmV0"));
 	private static final Logger LOG = LogManager.getLogger(JwtUtils.class.getName());
-	private static final String KEY_SECRET = "example-jwt-auth-key-secret";
 	private static final long serialVersionUID = -531843526886721468L;
-    private static final long EXPIRATION_TIME = 5 * 60 * 1000L;
     
     /**
      * Método responsável pela geração do token JWT.
      * 
-     * @param username - usuário da API
+     * @param clientId - client id da API
+     * @param scope - escopo do access token
+     * @param iat - data de emissão do access token
+     * @param exp - tempo de expiração do access token
      * 
      * @return token JWT gerado
      * 
      */
-    public static String generateToken(String username) {
+    public static String generateToken(String clientId, String scope, Date iat, Long exp) {
     	
-        return Jwts
+    	return Jwts
         	.builder()
-            .setSubject(username)
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+            .setSubject(clientId)
+            .claim("scope", scope)
+            .setIssuedAt(iat)
+            .setExpiration(new Date(System.currentTimeMillis() + exp))
             .signWith(SignatureAlgorithm.HS256, generateSecretKey())
             .compact();
         
